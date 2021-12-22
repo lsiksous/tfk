@@ -1,0 +1,59 @@
+💈Introduction à Tensorflow / Keras.
+#+PROPERTY: header-args:jupyter-python :session *Py* :results raw drawer :cache no :async yes :exports results :eval yes
+
+Présenter la librairie Tensorflow / Keras et s'approprier les concepts
+sous-jacents à l'entrainement de réseaux de neurones en utilisant cette
+bibliothèque.
+
+* Contexte du projet
+
+Le but de ce brief est de présenter la librairie TensorFlow / Keras et de
+s'approprier les concepts sous-jacents à l'entrainement de réseaux de neurones
+en utilisant cette bibliothèque. Pour cela, il faut développer :
+
+- Une veille pédagogique
+  - Y présenter la librairie (environ 5 diapositives)
+  - Y décrire notamment la notion de représentation des données par des tenseurs ("tensor" en anglais). Quelques mots-clés :
+    - Scalars (0D tensors), Vectors (1D tensors), Matrices (2D tensors), ...
+    - Vector data : 2D tensors of shape (samples, features)
+    - Timeseries data or sequence data : 3D tensors of shape (samples,
+      timesteps, features)
+    - Images : 4D tensors of shape (samples, height, width, channels) or
+      (samples, channels, height, width)
+    - Video : 5D tensors of shape (samples, frames, height, width, channels) or
+      (samples, frames, channels, height, width)
+​
+La régression par un perceptron multi-couche sera illustrée dans trois Jupyter
+Notebooks sur l'exemple du Boston house prices dataset en utilisant
+exclusivement TensorFlow / Keras (pas de scikit-learn).
+
+La classification par un perceptron multi-couche sera illustrée dans trois
+Jupyter Notebooks sur l'exemple du Breast cancer wisconsin (diagnostic) dataset
+en utilisant exclusivement TensorFlow / Keras (pas de scikit-learn).
+
+* Modalités pédagogiques
+
+Veille pédagogique : travail en équipes (3 à 4 apprenant.e.s). Jupyter
+Notebooks : travail personnel.
+
+* Livrables
+
+Une présentation type "Powerpoint", faisant office de veille pédagogique. Deux
+(* 3 !) Jupyter Notebooks : classification (exemple du Breast cancer wisconsin
+(diagnostic) dataset), et régression (exemple du Boston house prices dataset).
+
+
+* Bibliography
+** References
+:PROPERTIES:
+:BEAMER_opt: shrink=10
+:END:
+
+bibliographystyle:unsrt
+bibliography:tfk.bib
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# eval: (setenv "PATH" "/Library/TeX/texbin/:$PATH" t)
+# org-ref-default-bibliography: ("./olist.bib")
+# End:
