@@ -72,6 +72,7 @@
 %load_ext autoreload
 %autoreload 2
 
+from seaborn.relational import lineplot
 import os
 from cycler import cycler
 import warnings
@@ -95,7 +96,7 @@ print(f"TensorFlow Version: {tf.__version__}")
 
 #+RESULTS:
 :results:
-# Out[122]:
+# Out[1]:
 :end:
 
 ** Functions
@@ -103,13 +104,13 @@ print(f"TensorFlow Version: {tf.__version__}")
 #+begin_src jupyter-python
 # Display all
 def display_all(df):
-    with pd.option_context("display.max_rows", 100, "display.max_columns", 100): 
+    with pd.option_context("display.max_rows", 100, "display.max_columns", 20): 
         display(df)
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[25]:
+# Out[2]:
 :end:
 
 ** Org                                                            :noexport:
@@ -135,7 +136,83 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[26]:
+# Out[3]:
+:end:
+
+** Pandas Setup
+#+begin_src jupyter-python :exports none :eval no
+pd.set_option('display.max_rows', 50)
+pd.set_option('display.max_columns', 20)
+pd.set_option('display.width', 30)
+pd.set_option('display.max_colwidth', 10)
+#+end_src
+
+** Matplotlib setup
+
+#+begin_src jupyter-python
+#Fonts
+import matplotlib.font_manager
+[f.name for f in matplotlib.font_manager.fontManager.ttflist]
+plt.rcParams['font.family'] = 'Fira Mono'
+#+end_src   
+
+#+RESULTS:
+:results:
+# Out[13]:
+:end:
+
+#+begin_src jupyter-python
+#Financier Style
+ft_background = "#FFF1E5"
+ft_democratblue = "#0F56B5"
+ft_republicanred = "#EF4647"
+ft_pink = "#E95D8C"
+ft_darkred = "#7D062E"
+ft_darkblue = "#065296"
+ft_blue = "#2591CE"
+ft_lightblue = "#72D9E7"
+ft_greenish = "#A2BC5D"
+ft_maybegrey = "#716962"
+ft_golden = "#B89E17"
+
+tinyfont = 14
+smallfont = 20
+largefont = 28
+linewidth = 5
+
+plt.rcParams['figure.facecolor'] = ft_background
+plt.rcParams['axes.facecolor']= ft_background
+plt.rcParams['text.color']= ft_maybegrey
+plt.rcParams['xtick.color']= ft_maybegrey
+plt.rcParams['ytick.color']= ft_maybegrey
+plt.rcParams['axes.labelcolor']= ft_maybegrey
+
+plt.rcParams["axes.grid.axis"] ="y"
+plt.rcParams["axes.grid"] = True
+plt.rcParams['axes.spines.left'] = False
+plt.rcParams['axes.spines.right'] = False
+plt.rcParams['axes.spines.top'] = False
+plt.rcParams['axes.spines.bottom'] = True
+plt.rcParams['figure.figsize'] = (18,10)
+
+plt.rcParams['axes.titlesize'] = largefont
+plt.rcParams['font.size'] = smallfont
+plt.rcParams['xtick.labelsize'] = tinyfont
+plt.rcParams['ytick.labelsize'] = tinyfont
+plt.rcParams['axes.labelsize']  = smallfont    
+plt.rcParams['xtick.major.size'] = 10
+plt.rcParams['xtick.major.pad'] = 10
+plt.rcParams['ytick.major.size'] = 0
+plt.rcParams['ytick.major.pad'] = 10
+
+
+plt.rcParams['lines.linewidth'] = linewidth
+plt.rc('axes', prop_cycle=(cycler('color', [ft_darkblue, ft_blue, ft_lightblue, ft_pink, ft_darkred, ft_greenish])))
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[14]:
 :end:
 
 * Data Loading
@@ -148,7 +225,7 @@ x_train.shape, x_test.shape
 
 #+RESULTS:
 :results:
-# Out[14]:
+# Out[15]:
 : ((404, 13), (102, 13))
 :end:
 
@@ -161,7 +238,7 @@ normalizer.adapt(np.array(x_train))
 
 #+RESULTS:
 :results:
-# Out[17]:
+# Out[16]:
 :end:
 
 
@@ -171,7 +248,7 @@ print(normalizer.mean.numpy())
 
 #+RESULTS:
 :results:
-# Out[18]:
+# Out[17]:
 :end:
 
 
@@ -195,7 +272,7 @@ def build_and_compile_model(norm):
 
 #+RESULTS:
 :results:
-# Out[37]:
+# Out[18]:
 :end:
 
 #+begin_src jupyter-python
@@ -205,7 +282,7 @@ model.summary()
 
 #+RESULTS:
 :results:
-# Out[38]:
+# Out[19]:
 :end:
 
 
@@ -220,7 +297,7 @@ history = model.fit(
 
 #+RESULTS:
 :results:
-# Out[32]:
+# Out[9]:
 :end:
 
 #+begin_src jupyter-python
@@ -238,8 +315,8 @@ plot_loss(history)
 
 #+RESULTS:
 :results:
-# Out[33]:
-[[file:./obipy-resources/W7H8r8.png]]
+# Out[22]:
+[[file:./obipy-resources/FL16Jb.png]]
 :end:
 
 * Tuning Hyperparameters 
@@ -300,7 +377,7 @@ class RegressionHyperModel(HyperModel):
 
 #+RESULTS:
 :results:
-# Out[87]:
+# Out[30]:
 :end:
 
 #+begin_src jupyter-python
@@ -310,22 +387,7 @@ hypermodel = RegressionHyperModel(input_shape, normalizer)
 
 #+RESULTS:
 :results:
-# Out[106]:
-:end:
-
-#+begin_src jupyter-python
-checkpoint_path = "ckpt/"
-checkpoint_dir = os.path.dirname(checkpoint_path)
-
-# Create a callback that saves the model's weights
-cp_callback = ModelCheckpoint(filepath=checkpoint_path,
-                              save_weights_only=True,
-                              verbose=2)
-#+end_src
-
-#+RESULTS:
-:results:
-# Out[107]:
+# Out[31]:
 :end:
 
 #+begin_src jupyter-python
@@ -335,8 +397,7 @@ tuner_bo = BayesianOptimization(
     objective='mse',
     max_trials=10,
     seed=0,
-    executions_per_trial=2,
-    callbacks=[cp_callback]
+    executions_per_trial=2
 )
 
 tuner_bo.search(x_train, y_train, epochs=10, validation_split=0.2, verbose=0)
@@ -345,7 +406,7 @@ best_model = tuner_bo.get_best_models(num_models=1)[0]
 
 #+RESULTS:
 :results:
-# Out[108]:
+# Out[40]:
 :end:
 
 #+begin_src jupyter-python
@@ -354,7 +415,7 @@ best_model.summary()
 
 #+RESULTS:
 :results:
-# Out[123]:
+# Out[41]:
 :end:
 
 #+begin_src jupyter-python
@@ -372,47 +433,68 @@ And the dropout is {best_hps.get('dropout')}
 
 #+RESULTS:
 :results:
-# Out[103]:
+# Out[53]:
 :end:
 
 - Finally we fit our best model:
 
 #+begin_src jupyter-python
-best_model.fit(
-    x_train, 
-    y_train,
-    epochs=20,
-    batch_size=64
+checkpoint_path = "ckpt/cp.ckpt"
+checkpoint_dir = os.path.dirname(checkpoint_path)
+
+# Create a callback that saves the model's weights
+cp_callback = ModelCheckpoint(filepath=checkpoint_path,
+                              save_weights_only=True,
+                              save_freq=5,
+                              verbose=1)
+
+history = best_model.fit(x_train, 
+                         y_train,
+                         epochs=20,
+                         batch_size=16,
+                         callbacks=[cp_callback]
 )
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[118]:
-: <keras.callbacks.History at 0x150ee0e20>
+# Out[54]:
 :end:
+
 
 * Evaluation
 
 #+begin_src jupyter-python
-best_model.evaluate(x_train, y_train)
+val_loss, val_score = best_model.evaluate(x_train, y_train)
+print(val_loss)
+print(val_score)
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[119]:
-: [25.440704345703125, 25.440704345703125]
+# Out[56]:
 :end:
+
+#+begin_src jupyter-python
+#plot_loss(history)
+#+end_src
+
+#+RESULTS:
+:results:
+0 - 5505bfe9-6545-4472-a7e8-18600576808e
+:end:
+
+
 
 * Save best model
 
 #+begin_src jupyter-python
-best_model.save('model/tkf_boston')
+best_model.save('model/boston')
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[125]:
+# Out[58]:
 :end:
 
 * Bibliography
@@ -422,7 +504,7 @@ best_model.save('model/tkf_boston')
 :END:
 
 bibliographystyle:unsrt
-bibliography:perceptrons.bib
+bibliography:tfk.bib
 
 * Local Variables                                                  :noexport:
 # Local Variables:

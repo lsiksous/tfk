@@ -60,60 +60,10 @@
 
 #+begin_src emacs-lisp
 (setq org-src-fontify-natively t)
-
-(setq lsp-semantic-tokens-enable t)
-(setq lsp-enable-symbol-highlighting t)
-
-(setq lsp-enable-file-watchers nil
-      read-process-output-max (* 1024 1024)
-      gc-cons-threshold 100000000
-      lsp-idle-delay 0.5
-      ;;
-      lsp-eldoc-hook nil
-      lsp-eldoc-enable-hover nil
-
-      ;;pas de fil d'ariane
-      lsp-headerline-breadcrumb-enable nil
-      ;; pas de imenu voir menu-list
-      lsp-enable-imenu nil
-      ;; lentille
-      lsp-lens-enable t
- 
-      lsp-semantic-highlighting t
-      lsp-modeline-code-actions-enable t
-      )
-  
-(setq lsp-completion-provider :company
-      lsp-completion-show-detail t
-      lsp-completion-show-kind t)
-
-(setq lsp-ui-doc-enable t
-      lsp-ui-doc-show-with-mouse nil
-      lsp-ui-doc-show-with-cursor t
-      lsp-ui-doc-use-childframe t
-      
-      lsp-ui-sideline-diagnostic-max-line-length 80
-
-      ;; lsp-ui-imenu
-      lsp-ui-imenu-enable nil
-      ;; lsp-ui-peek
-      lsp-ui-peek-enable t
-      ;; lsp-ui-sideline
-      lsp-ui-sideline-enable t
-      lsp-ui-sideline-ignore-duplicate t
-      lsp-ui-sideline-show-symbol t
-      lsp-ui-sideline-show-hover t
-      lsp-ui-sideline-show-diagnostics t
-      lsp-ui-sideline-show-code-actions t
-      )
-
-(setq lsp-diagnostics-provider :none
-      lsp-modeline-diagnostics-enable nil
-      lsp-signature-auto-activate nil ;; you could manually request them via `lsp-signature-activate`
-      lsp-signature-render-documentation nil)
 #+end_src
 
 #+RESULTS:
+: t
 
 ** Imports
 
@@ -122,22 +72,26 @@
 %load_ext autoreload
 %autoreload 2
 
+from seaborn.relational import lineplot
+import os
 from cycler import cycler
 import warnings
 warnings.filterwarnings("ignore")
 
-import pickle
-
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from sklearn.model_selection import GridSearchCV
-from sklearn.neural_network import MLPRegressor
-from sklearn.metrics import mean_squared_error, r2_score
+import tensorflow as tf
+from kerastuner import HyperModel, BayesianOptimization
 
-from itertools import product
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Normalization, Dropout
+from tensorflow.keras.callbacks import ModelCheckpoint
+from keras.datasets import boston_housing
+
+print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
