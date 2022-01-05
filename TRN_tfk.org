@@ -354,7 +354,7 @@ best_model.summary()
 
 #+RESULTS:
 :results:
-# Out[115]:
+# Out[123]:
 :end:
 
 #+begin_src jupyter-python
@@ -375,6 +375,7 @@ And the dropout is {best_hps.get('dropout')}
 # Out[103]:
 :end:
 
+- Finally we fit our best model:
 
 #+begin_src jupyter-python
 best_model.fit(
@@ -406,12 +407,12 @@ best_model.evaluate(x_train, y_train)
 * Save best model
 
 #+begin_src jupyter-python
-best_model.save('data/model')
+best_model.save('model/tkf_boston')
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[109]:
+# Out[125]:
 :end:
 
 * Bibliography
