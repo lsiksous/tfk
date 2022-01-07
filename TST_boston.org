@@ -1,4 +1,4 @@
-💈 Introduction aux réseaux de neurones artificiels
+💈 Introduction TensorFlow/Keras
 #+PROPERTY: header-args:jupyter-python :session *Py* :results raw drawer :cache no :async yes :exports results :eval yes
 
 #+SUBTITLE: Test du modèle
@@ -79,23 +79,24 @@ import warnings
 warnings.filterwarnings("ignore")
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
 import tensorflow as tf
-from kerastuner import HyperModel, BayesianOptimization
+import tensorflow_probability as tfp
 
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Normalization, Dropout
-from tensorflow.keras.callbacks import ModelCheckpoint
-from keras.datasets import boston_housing
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
 
 print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
-: # Out[26]:
+:results:
+# Out[64]:
+:end:
 
 ** Functions
 
@@ -107,7 +108,9 @@ def display_all(df):
 #+end_src
 
 #+RESULTS:
-: # Out[27]:
+:results:
+# Out[65]:
+:end:
 
 ** Org                                                            :noexport:
 
@@ -131,110 +134,58 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 #+end_src
 
 #+RESULTS:
-: # Out[28]:
+:results:
+# Out[66]:
+:end:
 
-** Matplotlib setup
+* Load Data
 
 #+begin_src jupyter-python
-import matplotlib.font_manager
-[f.name for f in matplotlib.font_manager.fontManager.ttflist]
-plt.rcParams['font.family'] = 'Fira Mono'
-   
-#Financier Style
-ft_background = "#FFF1E5"
-ft_democratblue = "#0F56B5"
-ft_republicanred = "#EF4647"
-ft_pink = "#E95D8C"
-ft_darkred = "#7D062E"
-ft_darkblue = "#065296"
-ft_blue = "#2591CE"
-ft_lightblue = "#72D9E7"
-ft_greenish = "#A2BC5D"
-ft_maybegrey = "#716962"
-ft_golden = "#B89E17"
-
-tinyfont = 14
-smallfont = 20
-largefont = 28
-linewidth = 5
-
-plt.rcParams['figure.facecolor'] = ft_background
-plt.rcParams['axes.facecolor']= ft_background
-plt.rcParams['text.color']= ft_maybegrey
-plt.rcParams['xtick.color']= ft_maybegrey
-plt.rcParams['ytick.color']= ft_maybegrey
-plt.rcParams['axes.labelcolor']= ft_maybegrey
-
-plt.rcParams["axes.grid.axis"] ="y"
-plt.rcParams["axes.grid"] = True
-plt.rcParams['axes.spines.left'] = False
-plt.rcParams['axes.spines.right'] = False
-plt.rcParams['axes.spines.top'] = False
-plt.rcParams['axes.spines.bottom'] = True
-plt.rcParams['figure.figsize'] = (5, 5)
-
-plt.rcParams['axes.titlesize'] = largefont
-plt.rcParams['font.size'] = smallfont
-plt.rcParams['xtick.labelsize'] = tinyfont
-plt.rcParams['ytick.labelsize'] = tinyfont
-plt.rcParams['axes.labelsize']  = smallfont    
-plt.rcParams['xtick.major.size'] = 10
-plt.rcParams['xtick.major.pad'] = 10
-plt.rcParams['ytick.major.size'] = 0
-plt.rcParams['ytick.major.pad'] = 10
-
-
-plt.rcParams['lines.linewidth'] = linewidth
-plt.rc('axes', prop_cycle=(cycler('color', [ft_darkblue, ft_blue, ft_lightblue, ft_pink, ft_darkred, ft_greenish])))
+(x_train, y_train), (x_test, y_test) = boston_housing.load_data(test_split=0.2, seed=0)
+x_train.shape, x_test.shape
 #+end_src
 
 #+RESULTS:
-: # Out[29]:
+:results:
+# Out[67]:
+: ((404, 13), (102, 13))
+:end:
 
-* Loading
-** Load Data
-
-#+begin_src jupyter-python
-test = pd.read_csv('data/test.csv')
-#+end_src
-
-#+RESULTS:
-: # Out[30]:
-
-#+begin_src jupyter-python
-X = test.drop('MEDV', axis=1)
-y = test['MEDV']
-#+end_src
-
-#+RESULTS:
-: # Out[31]:
-
-** Load Model
+* Load Model
 
 #+begin_src jupyter-python :exports both
-with open('data/model.pkl', 'rb') as file:
-    model = pickle.load(file)
+model = tf.keras.models.load_model('./model/boston')
 #+end_src
 
 #+RESULTS:
-: # Out[32]:
+:results:
+# Out[68]:
+:end:
 
 * Evaluation
 
 #+begin_src jupyter-python
-y_predict = model.predict(X)
-rmse = (np.sqrt(mean_squared_error(y, y_predict)))
-r2 = r2_score(y, y_predict)
+val_loss, val_mse = model.evaluate(x_test, y_test)
 
-print("The model performance for test set")
-print("--------------------------------------")
-print('RMSE is {}'.format(rmse))
-print('R2 score is {}'.format(r2))
-print("\n")
+print(f"Soit une erreur d'estimation de {round(val_mse**0.5,2)} k$ en moyenne")
 #+end_src
 
 #+RESULTS:
-: # Out[33]:
+:results:
+# Out[76]:
+:end:
+
+
+#+begin_src jupyter-python
+predictions = model.predict(x_test)
+r2_score(y_test, predictions)
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[70]:
+: 0.9229782553226002
+:end:
 
 * Bibliography
 ** References
@@ -243,10 +194,9 @@ print("\n")
 :END:
 
 bibliographystyle:unsrt
-bibliography:perceptrons.bib
+bibliography:tfk.bib
 
 * Local Variables                                                  :noexport:
 # Local Variables:
 # eval: (setenv "PATH" "/Library/TeX/texbin/:$PATH" t)
-# org-ref-default-bibliography: ("./olist.bib")
 # End:

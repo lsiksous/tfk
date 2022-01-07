@@ -1,0 +1,271 @@
+💈Introduction à Tensorflow / Keras.
+#+PROPERTY: header-args:jupyter-python :session *Py* :results raw drawer :cache no :async yes :exports results :eval yes
+
+#+SUBTITLE: Préparation des données
+#+AUTHOR: Laurent Siksous
+#+EMAIL: siksous@gmail.com
+# #+DATE: 
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  fr
+
+# specifying the beamer startup gives access to a number of
+# keybindings which make configuring individual slides and components
+# of slides easier.  See, for instance, C-c C-b on a frame headline.
+#+STARTUP: beamer
+
+#+STARTUP: oddeven
+
+# we tell the exporter to use a specific LaTeX document class, as
+# defined in org-latex-classes.  By default, this does not include a
+# beamer entry so this needs to be defined in your configuration (see
+# the tutorial).
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [bigger] 
+
+#+LATEX_HEADER: \usepackage{listings}
+
+#+LATEX_HEADER: \definecolor{UBCblue}{rgb}{0.04706, 0.13725, 0.26667} % UBC Blue (primary)
+#+LATEX_HEADER: \usecolortheme[named=UBCblue]{structure}
+
+# Beamer supports alternate themes.  Choose your favourite here
+#+BEAMER_COLOR_THEME: dolphin
+#+BEAMER_FONT_THEME:  default
+#+BEAMER_INNER_THEME: [shadow]rounded
+#+BEAMER_OUTER_THEME: infolines
+
+# the beamer exporter expects to be told which level of headlines
+# defines the frames.  We use the first level headlines for sections
+# and the second (hence H:2) for frames.
+#+OPTIONS: ^:nil  H:2 toc:t
+
+# the following allow us to selectively choose headlines to export or not
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+
+# for a column view of options and configurations for the individual
+# frames
+#+COLUMNS: %20ITEM %13BEAMER_env(Env) %6BEAMER_envargs(Args) %4BEAMER_col(Col) %7BEAMER_extra(Extra)
+
+# #+BEAMER_HEADER: \usebackgroundtemplate{\includegraphics[width=\paperwidth,height=\paperheight,opacity=.01]{img/bg2.jpeg}}
+# #+BEAMER_HEADER: \logo{\includegraphics[height=.5cm,keepaspectratio]{img/bti_logo2.png}\vspace{240pt}}
+# #+BEAMER_HEADER: \setbeamertemplate{background canvas}{\begin{tikzpicture}\node[opacity=.1]{\includegraphics [width=\paperwidth,height=\paperheight]{img/background.jpg}};\end{tikzpicture}}
+# #+BEAMER_HEADER: \logo{\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]{img/background.jpg}}
+#+BEAMER_HEADER: \titlegraphic{\includegraphics[width=50]{img/logo.png}}
+# #+BEAMER_HEADER: \definecolor{ft}{RGB}{255, 241, 229}
+#+BEAMER_HEADER: \setbeamercolor{background canvas}{bg=ft}
+
+* Preamble
+** Emacs Setup                                                    :noexport:
+
+#+begin_src emacs-lisp
+(setq org-src-fontify-natively t)
+#+end_src
+
+#+RESULTS:
+: t
+
+** Imports
+
+#+begin_src jupyter-python
+%matplotlib inline
+%load_ext autoreload
+%autoreload 2
+
+import warnings
+warnings.filterwarnings("ignore")
+import pickle as pkl
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import statsmodels.api as sm
+
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
+from sklearn.datasets import load_breast_cancer
+
+import tensorflow as tf
+import kerastuner as kt
+
+from keras.models import Sequential
+from keras.layers import Dense, Normalization
+from keras.datasets import boston_housing
+
+print(f"TensorFlow Version: {tf.__version__}")
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[88]:
+:end:
+
+** Functions
+
+#+begin_src jupyter-python
+# Display all
+def display_all(df):
+    with pd.option_context("display.max_rows", 100, "display.max_columns", 100): 
+        display(df)
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[77]:
+:end:
+
+** Org                                                            :noexport:
+
+#+begin_src jupyter-python
+# Org-mode table formatter
+import IPython
+import tabulate
+
+class OrgFormatter(IPython.core.formatters.BaseFormatter):
+    format_type = IPython.core.formatters.Unicode('text/org')
+    print_method = IPython.core.formatters.ObjectName('_repr_org_')
+
+def pd_dataframe_to_org(df):
+    return tabulate.tabulate(df, headers='keys', tablefmt='orgtbl', showindex='always')
+
+ip = get_ipython()
+ip.display_formatter.formatters['text/org'] = OrgFormatter()
+
+f = ip.display_formatter.formatters['text/org']
+f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[79]:
+:end:
+
+** Seaborn
+
+#+begin_src jupyter-python
+sns.set(rc={'figure.figsize':(15,10)})
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[80]:
+:end:
+
+* Data Wrangling
+** Load Data
+
+#+begin_src jupyter-python
+X = load_breast_cancer()['data']
+y = load_breast_cancer()['target']
+feature_names = load_breast_cancer()['feature_names']
+print(feature_names)
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[81]:
+:end:
+
+Variables are in order:
+['mean radius' 'mean texture' 'mean perimeter' 'mean area'
+ 'mean smoothness' 'mean compactness' 'mean concavity'
+ 'mean concave points' 'mean symmetry' 'mean fractal dimension'
+ 'radius error' 'texture error' 'perimeter error' 'area error'
+ 'smoothness error' 'compactness error' 'concavity error'
+ 'concave points error' 'symmetry error' 'fractal dimension error'
+ 'worst radius' 'worst texture' 'worst perimeter' 'worst area'
+ 'worst smoothness' 'worst compactness' 'worst concavity'
+ 'worst concave points' 'worst symmetry' 'worst fractal dimension']
+
+** Glimpse at the data
+
+#+begin_src jupyter-python
+df = pd.DataFrame(X, columns=feature_names)
+display_all(df.describe(include='all').T)
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[82]:
+|                         |   count |         mean |          std |         min |        25% |        50% |         75% |        max |
+|-------------------------+---------+--------------+--------------+-------------+------------+------------+-------------+------------|
+| mean radius             |     569 |  14.1273     |   3.52405    |   6.981     |  11.7      |  13.37     |   15.78     |   28.11    |
+| mean texture            |     569 |  19.2896     |   4.30104    |   9.71      |  16.17     |  18.84     |   21.8      |   39.28    |
+| mean perimeter          |     569 |  91.969      |  24.299      |  43.79      |  75.17     |  86.24     |  104.1      |  188.5     |
+| mean area               |     569 | 654.889      | 351.914      | 143.5       | 420.3      | 551.1      |  782.7      | 2501       |
+| mean smoothness         |     569 |   0.0963603  |   0.0140641  |   0.05263   |   0.08637  |   0.09587  |    0.1053   |    0.1634  |
+| mean compactness        |     569 |   0.104341   |   0.0528128  |   0.01938   |   0.06492  |   0.09263  |    0.1304   |    0.3454  |
+| mean concavity          |     569 |   0.0887993  |   0.0797198  |   0         |   0.02956  |   0.06154  |    0.1307   |    0.4268  |
+| mean concave points     |     569 |   0.0489191  |   0.0388028  |   0         |   0.02031  |   0.0335   |    0.074    |    0.2012  |
+| mean symmetry           |     569 |   0.181162   |   0.0274143  |   0.106     |   0.1619   |   0.1792   |    0.1957   |    0.304   |
+| mean fractal dimension  |     569 |   0.0627976  |   0.00706036 |   0.04996   |   0.0577   |   0.06154  |    0.06612  |    0.09744 |
+| radius error            |     569 |   0.405172   |   0.277313   |   0.1115    |   0.2324   |   0.3242   |    0.4789   |    2.873   |
+| texture error           |     569 |   1.21685    |   0.551648   |   0.3602    |   0.8339   |   1.108    |    1.474    |    4.885   |
+| perimeter error         |     569 |   2.86606    |   2.02185    |   0.757     |   1.606    |   2.287    |    3.357    |   21.98    |
+| area error              |     569 |  40.3371     |  45.491      |   6.802     |  17.85     |  24.53     |   45.19     |  542.2     |
+| smoothness error        |     569 |   0.00704098 |   0.00300252 |   0.001713  |   0.005169 |   0.00638  |    0.008146 |    0.03113 |
+| compactness error       |     569 |   0.0254781  |   0.0179082  |   0.002252  |   0.01308  |   0.02045  |    0.03245  |    0.1354  |
+| concavity error         |     569 |   0.0318937  |   0.0301861  |   0         |   0.01509  |   0.02589  |    0.04205  |    0.396   |
+| concave points error    |     569 |   0.0117961  |   0.00617029 |   0         |   0.007638 |   0.01093  |    0.01471  |    0.05279 |
+| symmetry error          |     569 |   0.0205423  |   0.00826637 |   0.007882  |   0.01516  |   0.01873  |    0.02348  |    0.07895 |
+| fractal dimension error |     569 |   0.0037949  |   0.00264607 |   0.0008948 |   0.002248 |   0.003187 |    0.004558 |    0.02984 |
+| worst radius            |     569 |  16.2692     |   4.83324    |   7.93      |  13.01     |  14.97     |   18.79     |   36.04    |
+| worst texture           |     569 |  25.6772     |   6.14626    |  12.02      |  21.08     |  25.41     |   29.72     |   49.54    |
+| worst perimeter         |     569 | 107.261      |  33.6025     |  50.41      |  84.11     |  97.66     |  125.4      |  251.2     |
+| worst area              |     569 | 880.583      | 569.357      | 185.2       | 515.3      | 686.5      | 1084        | 4254       |
+| worst smoothness        |     569 |   0.132369   |   0.0228324  |   0.07117   |   0.1166   |   0.1313   |    0.146    |    0.2226  |
+| worst compactness       |     569 |   0.254265   |   0.157336   |   0.02729   |   0.1472   |   0.2119   |    0.3391   |    1.058   |
+| worst concavity         |     569 |   0.272188   |   0.208624   |   0         |   0.1145   |   0.2267   |    0.3829   |    1.252   |
+| worst concave points    |     569 |   0.114606   |   0.0657323  |   0         |   0.06493  |   0.09993  |    0.1614   |    0.291   |
+| worst symmetry          |     569 |   0.290076   |   0.0618675  |   0.1565    |   0.2504   |   0.2822   |    0.3179   |    0.6638  |
+| worst fractal dimension |     569 |   0.0839458  |   0.0180613  |   0.05504   |   0.07146  |   0.08004  |    0.09208  |    0.2075  |
+:end:
+
+
+- Target variable
+
+#+begin_src jupyter-python :exports both
+plt.figure(figsize=(16,3))
+plt.barh(['Malignant','Benign'],[sum(y), len(y)-sum(y)], height=0.3)
+plt.title('Class Distribution', fontsize=15)
+plt.show()
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[83]:
+[[file:./obipy-resources/D2PEPq.png]]
+:end:
+
+
+
+#+begin_src jupyter-python
+correlation_matrix = df.corr().round(2)
+sns.heatmap(data=correlation_matrix, annot=True)
+plt.show()
+#+end_src
+
+#+RESULTS:
+:results:
+# Out[84]:
+[[file:./obipy-resources/KQDG4m.png]]
+:end:
+
+* Bibliography
+** References
+:PROPERTIES:
+:BEAMER_opt: shrink=10
+:END:
+
+bibliographystyle:unsrt
+bibliography:tfk.bib
+
+* Local Variables                                                  :noexport:
+# Local Variables:
+# eval: (setenv "PATH" "/Library/TeX/texbin/:$PATH" t)
+# org-ref-default-bibliography: ("./olist.bib")
+# End:
