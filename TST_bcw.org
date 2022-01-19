@@ -84,14 +84,16 @@ import seaborn as sns
 
 import tensorflow as tf
 
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import roc_auc_score
+from sklearn.datasets import load_breast_cancer
 
 print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[64]:
+# Out[104]:
 :end:
 
 ** Functions
@@ -105,7 +107,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[65]:
+# Out[105]:
 :end:
 
 ** Org                                                            :noexport:
@@ -131,7 +133,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[66]:
+# Out[106]:
 :end:
 
 * Load Data
@@ -145,7 +147,7 @@ print(feature_names)
 
 #+RESULTS:
 :results:
-# Out[62]:
+# Out[107]:
 :end:
 
 * Split the data
@@ -160,7 +162,7 @@ x_train.shape, y_train.shape
 
 #+RESULTS:
 :results:
-# Out[63]:
+# Out[108]:
 : ((455, 30), (455,))
 :end:
 
@@ -172,7 +174,7 @@ model = tf.keras.models.load_model('./model/bcw')
 
 #+RESULTS:
 :results:
-# Out[64]:
+# Out[109]:
 :end:
 
 * Evaluation
@@ -184,19 +186,21 @@ val_loss, val_accuracy
 
 #+RESULTS:
 :results:
-# Out[65]:
-: (0.07465049624443054, 0.9824561476707458)
+# Out[110]:
+: (0.07458643615245819, 0.9824561476707458)
 :end:
 
 
-#+begin_src jupyter-python
+#+begin_src jupyter-python :results output
 predictions = np.argmax(model.predict(x_test), axis=1)
-print(f'Accuracy on test data: {val_accuracy}\nError on test data: {val_loss}')    
+print(f'Accuracy on test data: {val_accuracy}\nError on test data: {val_loss}')
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[83]:
+Accuracy on test data: 0.9824561476707458
+Error on test data: 0.07458643615245819
+2022-01-19 16:11:17.325436: I tensorflow/core/grappler/optimizers/custom_graph_optimizer_registry.cc:112] Plugin optimizer for device_type GPU is enabled.
 :end:
 
 #+begin_src jupyter-python
@@ -207,7 +211,7 @@ conf_matrix
 
 #+RESULTS:
 :results:
-# Out[86]:
+# Out[112]:
 #+BEGIN_EXAMPLE
   <tf.Tensor: shape=(2, 2), dtype=int32, numpy=
   array([[40,  2],

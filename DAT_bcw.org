@@ -90,18 +90,16 @@ from sklearn.metrics import roc_auc_score
 from sklearn.datasets import load_breast_cancer
 
 import tensorflow as tf
-import kerastuner as kt
 
 from keras.models import Sequential
 from keras.layers import Dense, Normalization
-from keras.datasets import boston_housing
 
 print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[88]:
+# Out[96]:
 :end:
 
 ** Functions
@@ -115,7 +113,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[77]:
+# Out[97]:
 :end:
 
 ** Org                                                            :noexport:
@@ -141,7 +139,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[79]:
+# Out[98]:
 :end:
 
 ** Seaborn
@@ -152,7 +150,7 @@ sns.set(rc={'figure.figsize':(15,10)})
 
 #+RESULTS:
 :results:
-# Out[80]:
+# Out[99]:
 :end:
 
 * Data Wrangling
@@ -167,7 +165,7 @@ print(feature_names)
 
 #+RESULTS:
 :results:
-# Out[81]:
+# Out[100]:
 :end:
 
 Variables are in order:
@@ -190,7 +188,7 @@ display_all(df.describe(include='all').T)
 
 #+RESULTS:
 :results:
-# Out[82]:
+# Out[101]:
 |                         |   count |         mean |          std |         min |        25% |        50% |         75% |        max |
 |-------------------------+---------+--------------+--------------+-------------+------------+------------+-------------+------------|
 | mean radius             |     569 |  14.1273     |   3.52405    |   6.981     |  11.7      |  13.37     |   15.78     |   28.11    |
@@ -237,8 +235,8 @@ plt.show()
 
 #+RESULTS:
 :results:
-# Out[83]:
-[[file:./obipy-resources/D2PEPq.png]]
+# Out[102]:
+[[file:./obipy-resources/biwpmk.png]]
 :end:
 
 
@@ -251,8 +249,8 @@ plt.show()
 
 #+RESULTS:
 :results:
-# Out[84]:
-[[file:./obipy-resources/KQDG4m.png]]
+# Out[103]:
+[[file:./obipy-resources/7NwrRn.png]]
 :end:
 
 * Bibliography

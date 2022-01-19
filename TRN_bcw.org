@@ -94,14 +94,13 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Normalization, Dropout
 from tensorflow.keras.callbacks import ModelCheckpoint
-from keras.datasets import boston_housing
 
 print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[45]:
+# Out[70]:
 :end:
 
 ** Functions
@@ -115,7 +114,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[46]:
+# Out[71]:
 :end:
 
 ** Org                                                            :noexport:
@@ -141,7 +140,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[47]:
+# Out[72]:
 :end:
 
 ** Seaborn
@@ -152,7 +151,7 @@ sns.set(rc={'figure.figsize':(11.7,8.27)})
 
 #+RESULTS:
 :results:
-# Out[48]:
+# Out[73]:
 :end:
 
 
@@ -167,7 +166,7 @@ df = pd.DataFrame(X, columns=feature_names)
 
 #+RESULTS:
 :results:
-# Out[49]:
+# Out[74]:
 :end:
 
 
@@ -183,7 +182,7 @@ x_train.shape, y_train.shape
 
 #+RESULTS:
 :results:
-# Out[50]:
+# Out[75]:
 : ((455, 30), (455,))
 :end:
 
@@ -196,7 +195,7 @@ normalizer.adapt(np.array(x_train))
 
 #+RESULTS:
 :results:
-# Out[51]:
+# Out[76]:
 :end:
 
 
@@ -206,7 +205,7 @@ print(normalizer.mean.numpy())
 
 #+RESULTS:
 :results:
-# Out[52]:
+# Out[77]:
 :end:
 
 * Tuning Hyperparameters 
@@ -257,9 +256,15 @@ class ClassificationHyperModel(HyperModel):
         )
         
         model.add(Dense(2, activation='softmax'))
+
+        lr = hp.Choice('learning_rate',
+            values=[1e-1, 1e-2, 1e-3])
+        opt = Adam(learning_rate=lr)
         
         model.compile(
-            optimizer='adam',loss='sparse_categorical_crossentropy', metrics=['accuracy']
+            optimizer=opt,
+            loss='sparse_categorical_crossentropy',
+            metrics=['accuracy']
         )
         
         return model
@@ -267,7 +272,7 @@ class ClassificationHyperModel(HyperModel):
 
 #+RESULTS:
 :results:
-# Out[53]:
+# Out[78]:
 :end:
 
 #+begin_src jupyter-python
@@ -277,7 +282,7 @@ hypermodel = ClassificationHyperModel(input_shape, normalizer)
 
 #+RESULTS:
 :results:
-# Out[54]:
+# Out[79]:
 :end:
 
 #+begin_src jupyter-python
@@ -299,7 +304,7 @@ best_model = tuner_bo.get_best_models(num_models=1)[0]
 
 #+RESULTS:
 :results:
-# Out[55]:
+# Out[80]:
 :end:
 
 #+begin_src jupyter-python :results output
@@ -339,6 +344,7 @@ The hyperparameter search is complete. The optimal number of units in the first 
 layer is {best_hps.get('units_1')} and the optimal activation is {best_hps.get('dense_activation_1')}.
 The optimal number of units in the second densely-connected
 layer is {best_hps.get('units_2')} and the optimal activation is {best_hps.get('dense_activation_2')}.
+The learning rate is {best_hps.get('learning_rate')}.
 And the dropout is {best_hps.get('dropout')}
 """)
 #+end_src
@@ -350,6 +356,7 @@ The hyperparameter search is complete. The optimal number of units in the first 
 layer is 44 and the optimal activation is relu.
 The optimal number of units in the second densely-connected
 layer is 36 and the optimal activation is tanh.
+The learning rate is 0.1.
 And the dropout is 0.09
 
 :end:
@@ -382,7 +389,7 @@ history = best_model.fit(x_train,
 
 #+RESULTS:
 :results:
-# Out[58]:
+# Out[83]:
 :end:
 
 
@@ -395,8 +402,8 @@ val_loss, val_accuracy
 
 #+RESULTS:
 :results:
-# Out[59]:
-: (0.0586530901491642, 0.9868132472038269)
+# Out[84]:
+: (0.058622051030397415, 0.9868132472038269)
 :end:
 
 #+begin_src jupyter-python
@@ -413,8 +420,8 @@ plot_fit(history, 'loss')
 
 #+RESULTS:
 :results:
-# Out[60]:
-[[file:./obipy-resources/xUbQYg.png]]
+# Out[85]:
+[[file:./obipy-resources/Ef1wPI.png]]
 :end:
 
 
@@ -427,7 +434,7 @@ best_model.save('model/bcw')
 
 #+RESULTS:
 :results:
-# Out[61]:
+# Out[86]:
 :end:
 
 * Bibliography

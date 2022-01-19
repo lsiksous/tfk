@@ -98,7 +98,7 @@ print(f"TensorFlow Version: {tf.__version__}")
 
 #+RESULTS:
 :results:
-# Out[20]:
+# Out[1]:
 :end:
 
 ** Functions
@@ -112,7 +112,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[21]:
+# Out[2]:
 :end:
 
 ** Org                                                            :noexport:
@@ -138,7 +138,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[22]:
+# Out[3]:
 :end:
 
 ** Seaborn
@@ -149,7 +149,7 @@ sns.set(rc={'figure.figsize':(11.7,8.27)})
 
 #+RESULTS:
 :results:
-# Out[23]:
+# Out[4]:
 :end:
 
 * Data Loading
@@ -162,7 +162,7 @@ x_train.shape, x_test.shape
 
 #+RESULTS:
 :results:
-# Out[24]:
+# Out[5]:
 : ((404, 13), (102, 13))
 :end:
 
@@ -175,7 +175,7 @@ normalizer.adapt(np.array(x_train))
 
 #+RESULTS:
 :results:
-# Out[25]:
+# Out[6]:
 :end:
 
 
@@ -185,7 +185,7 @@ print(normalizer.mean.numpy())
 
 #+RESULTS:
 :results:
-# Out[26]:
+# Out[7]:
 :end:
 
 
@@ -209,7 +209,7 @@ def build_and_compile_model(norm):
 
 #+RESULTS:
 :results:
-# Out[27]:
+# Out[8]:
 :end:
 
 #+begin_src jupyter-python
@@ -219,7 +219,7 @@ model.summary()
 
 #+RESULTS:
 :results:
-# Out[28]:
+# Out[9]:
 :end:
 
 
@@ -234,7 +234,7 @@ history = model.fit(
 
 #+RESULTS:
 :results:
-# Out[29]:
+# Out[10]:
 :end:
 
 #+begin_src jupyter-python
@@ -244,7 +244,7 @@ history.history.keys()
 
 #+RESULTS:
 :results:
-# Out[30]:
+# Out[11]:
 : dict_keys(['loss', 'mse', 'val_loss', 'val_mse'])
 :end:
 
@@ -263,8 +263,8 @@ plot_fit(history, 'loss')
 
 #+RESULTS:
 :results:
-# Out[31]:
-[[file:./obipy-resources/X1mRxO.png]]
+# Out[12]:
+[[file:./obipy-resources/JQWdRE.png]]
 :end:
 
 * Tuning Hyperparameters 
@@ -315,17 +315,21 @@ class RegressionHyperModel(HyperModel):
         )
         
         model.add(Dense(1))
-        
+
+        lr = hp.Choice('learning_rate',
+            values=[1e-1, 1e-2, 1e-3])
+        opt = Adam(learning_rate=lr)
+
         model.compile(
-            optimizer='adam',loss='mse',metrics=['mse']
+            optimizer=opt, loss='mse', metrics=['mse']
         )
-        
+
         return model
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[32]:
+# Out[13]:
 :end:
 
 #+begin_src jupyter-python
@@ -335,7 +339,7 @@ hypermodel = RegressionHyperModel(input_shape, normalizer)
 
 #+RESULTS:
 :results:
-# Out[33]:
+# Out[14]:
 :end:
 
 #+begin_src jupyter-python
@@ -356,7 +360,7 @@ best_model = tuner_bo.get_best_models(num_models=1)[0]
 
 #+RESULTS:
 :results:
-# Out[34]:
+# Out[15]:
 :end:
 
 #+begin_src jupyter-python
@@ -365,7 +369,7 @@ best_model.summary()
 
 #+RESULTS:
 :results:
-# Out[35]:
+# Out[16]:
 :end:
 
 #+begin_src jupyter-python
@@ -377,13 +381,14 @@ The hyperparameter search is complete. The optimal number of units in the first 
 layer is {best_hps.get('units_1')} and the optimal activation is {best_hps.get('dense_activation_1')}.
 The optimal number of units in the second densely-connected
 layer is {best_hps.get('units_2')} and the optimal activation is {best_hps.get('dense_activation_2')}.
+The learning rate is {best_hps.get('learning_rate')}.
 And the dropout is {best_hps.get('dropout')}
 """)
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[36]:
+# Out[17]:
 :end:
 
 - Finally we fit our best model:
@@ -414,7 +419,7 @@ history = best_model.fit(x_train,
 
 #+RESULTS:
 :results:
-# Out[59]:
+# Out[18]:
 :end:
 
 #+begin_src jupyter-python
@@ -424,8 +429,8 @@ val_loss, val_mse
 
 #+RESULTS:
 :results:
-# Out[60]:
-: (9.122809410095215, 9.122809410095215)
+# Out[19]:
+: (9.726722717285156, 9.726722717285156)
 :end:
 
 #+begin_src jupyter-python
@@ -434,8 +439,8 @@ plot_fit(history, 'loss')
 
 #+RESULTS:
 :results:
-# Out[61]:
-[[file:./obipy-resources/W1QRkp.png]]
+# Out[20]:
+[[file:./obipy-resources/A7uvUr.png]]
 :end:
 
 #+begin_src jupyter-python
@@ -445,8 +450,8 @@ r2_score(y_test, predictions)
 
 #+RESULTS:
 :results:
-# Out[62]:
-: 0.9091890558671677
+# Out[21]:
+: 0.8640092207232474
 :end:
 
 
@@ -458,7 +463,7 @@ best_model.save('model/boston')
 
 #+RESULTS:
 :results:
-# Out[63]:
+# Out[22]:
 :end:
 
 * Bibliography

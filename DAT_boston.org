@@ -97,7 +97,7 @@ print(f"TensorFlow Version: {tf.__version__}")
 
 #+RESULTS:
 :results:
-# Out[1]:
+# Out[37]:
 :end:
 
 ** Functions
@@ -111,7 +111,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[2]:
+# Out[38]:
 :end:
 
 ** Org                                                            :noexport:
@@ -137,7 +137,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[3]:
+# Out[39]:
 :end:
 
 ** Seaborn
@@ -148,7 +148,7 @@ sns.set(rc={'figure.figsize':(11.7,8.27)})
 
 #+RESULTS:
 :results:
-# Out[4]:
+# Out[40]:
 :end:
 
 * Data Wrangling
@@ -161,7 +161,7 @@ x_train.shape, x_test.shape
 
 #+RESULTS:
 :results:
-# Out[5]:
+# Out[41]:
 : ((404, 13), (102, 13))
 :end:
 
@@ -192,7 +192,7 @@ target = ['MEDV']
 
 #+RESULTS:
 :results:
-# Out[6]:
+# Out[42]:
 :end:
 
 ** Glimpse at the data
@@ -204,7 +204,7 @@ display_all(df.describe(include='all').T)
 
 #+RESULTS:
 :results:
-# Out[7]:
+# Out[43]:
 |         |   count |        mean |        std |       min |         25% |       50% |       75% |      max |
 |---------+---------+-------------+------------+-----------+-------------+-----------+-----------+----------|
 | CRIM    |     404 |   3.67933   |   8.98726  |   0.00632 |   0.0829725 |   0.26888 |   3.48946 |  88.9762 |
@@ -231,8 +231,8 @@ plt.show()
 
 #+RESULTS:
 :results:
-# Out[8]:
-[[file:./obipy-resources/tmPE8g.png]]
+# Out[44]:
+[[file:./obipy-resources/RIMOLi.png]]
 :end:
 
 
@@ -245,8 +245,8 @@ plt.show()
 
 #+RESULTS:
 :results:
-# Out[9]:
-[[file:./obipy-resources/mvsYeV.png]]
+# Out[45]:
+[[file:./obipy-resources/23cOao.png]]
 :end:
 
 
@@ -262,7 +262,7 @@ X_test = scaler.transform(x_test)
 
 #+RESULTS:
 :results:
-# Out[10]:
+# Out[46]:
 :end:
 
 
@@ -274,7 +274,7 @@ model.fit(X_train, y_train)
 
 #+RESULTS:
 :results:
-# Out[11]:
+# Out[47]:
 : LinearRegression()
 :end:
 
@@ -326,7 +326,7 @@ test.to_csv('data/test.csv', index=False)
 
 #+RESULTS:
 :results:
-# Out[13]:
+# Out[49]:
 :end:
 
 * Bibliography

@@ -86,16 +86,16 @@ import seaborn as sns
 import tensorflow as tf
 import tensorflow_probability as tfp
 
-from sklearn.datasets import load_breast_cancer
+from keras.datasets import boston_housing
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import r2_score
 
 print(f"TensorFlow Version: {tf.__version__}")
 #+end_src
 
 #+RESULTS:
 :results:
-# Out[64]:
+# Out[30]:
 :end:
 
 ** Functions
@@ -109,7 +109,7 @@ def display_all(df):
 
 #+RESULTS:
 :results:
-# Out[65]:
+# Out[31]:
 :end:
 
 ** Org                                                            :noexport:
@@ -135,7 +135,7 @@ f.for_type_by_name('pandas.core.frame', 'DataFrame', pd_dataframe_to_org)
 
 #+RESULTS:
 :results:
-# Out[66]:
+# Out[32]:
 :end:
 
 * Load Data
@@ -147,7 +147,7 @@ x_train.shape, x_test.shape
 
 #+RESULTS:
 :results:
-# Out[67]:
+# Out[33]:
 : ((404, 13), (102, 13))
 :end:
 
@@ -159,7 +159,7 @@ model = tf.keras.models.load_model('./model/boston')
 
 #+RESULTS:
 :results:
-# Out[68]:
+# Out[34]:
 :end:
 
 * Evaluation
@@ -172,7 +172,7 @@ print(f"Soit une erreur d'estimation de {round(val_mse**0.5,2)} k$ en moyenne")
 
 #+RESULTS:
 :results:
-# Out[76]:
+# Out[35]:
 :end:
 
 
@@ -183,8 +183,8 @@ r2_score(y_test, predictions)
 
 #+RESULTS:
 :results:
-# Out[70]:
-: 0.9229782553226002
+# Out[36]:
+: 0.9249490588363772
 :end:
 
 * Bibliography
